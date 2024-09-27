@@ -14,7 +14,7 @@ public class main {
     private static int numberOfExercises;
     //-r的参数
     private static int range;
-    private static final String[] OPERATORS = {"+", "-", "*", "/"};
+    private static final String[] OPERATORS = {"+", "-", "*", "÷"};
     private static List<String> generatedExercises = new ArrayList<String>();
     private static List<String> answers = new ArrayList<String>();
     //界面
@@ -39,18 +39,27 @@ public class main {
         //生成题目和答案
         while (generatedExercises.size() < numberOfExercises) {
             String exercise = generateRandomExpression(rand,generatedExercises.size());
+            //将式子放入题目的List
+            generatedExercises.add(exercise);
+            System.out.println(exercise);
             //判断两个式子是否相同
-            for (String s1:generatedExercises) {
-                if (!ifContains(exercise,s1)) {
-                    //将式子放入题目的List
-                    generatedExercises.add(exercise);
-                    //生成答案
-                    double answer = evaluateExpression(exercise);
-                    //写入答案
-                    answers.add(String.valueOf(answer));
-                }
-            }
+            /**
+             *   for (int i=0;i<generatedExercises.size()-1;i++) {
+             *                 String s1=generatedExercises.get(i);
+             *                 if (!ifContains(exercise,s1)) {
+             *                     //生成答案
+             *                     double answer = evaluateExpression(exercise);
+             *                     //写入答案
+             *                     answers.add(String.valueOf(answer));
+             *
+             *                 }else{
+             *                     generatedExercises.remove(exercise);
+             *                 }
+             *             }
+              */
+
         }
+        return;
     }
     /**
      * 生成随机题目
@@ -70,9 +79,66 @@ public class main {
      * 具体的生成器
      */
     private static String formExpression(int r,int opeNum){
-        return "String";
+        Random random = new Random();
+        Number[] numList = new Number[opeNum+1];
+        String[] numListString = new String[opeNum+1];
+        String[] opeList = new String[opeNum];
+        StringBuffer str = new StringBuffer();
+        //随机生成符号
+        for(int i=0;i<opeNum;i++) {
+            opeList[i]=OPERATORS[random.nextInt(4)];
+        }
+        //先生成一个数值
+        Number number0 = built(r, random);
+        numList[0]=number0;
+        //随机生成数值
+        for(int i=0;i<opeNum;i++){
+            //减号
+            if(opeList[i]==OPERATORS[1]){
+                //比前面一个数字小
+                Number number=built(r,random);
+                while(!number.judge(numList[i],number)){
+                    number=built(r,random);
+                }
+                numList[i+1]=number;
+            }else{
+                Number number=built(r,random);
+                numList[i+1]=number;
+            }
+        }
+        //转换为Sring格式
+        for(int i=0;i<=opeNum;i++){
+            numListString[i]=numList[i].toString(numList[i]);
+        }
+        //输出式子
+        for(int i=0;i<2*opeNum+1;i++) {
+            if(i%2==0) {
+                str.append(numListString[i/2]+" ");
+            }
+            if(i%2!=0) {
+                str.append(opeList[(i-1)/2]+" ");
+            }
+        }
+        str.append("="+" ");
+        return str.toString();
     }
 
+    /**
+     * 生成数值且不超过限定值
+     * @param r
+     * @param random
+     * @return
+     */
+    public static Number built(int r, Random random){
+        Number number = new Number();
+        //0-9
+        number.fro=random.nextInt(r);
+        //1-10
+        number.down=random.nextInt(r)+1;
+        //1-10(<=down)
+        number.up=random.nextInt(number.down)+1;
+        return number;
+    }
 
     /**
      * 比较是否相同
@@ -143,7 +209,7 @@ public class main {
     private static void writeToFile(String filename, List<String> exercises) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (int i = 0; i < exercises.size(); i++) {
-                writer.write((i + 1) + ". " + exercises.get(i));
+                writer.write( exercises.get(i));
                 writer.newLine();
             }
         }
@@ -158,7 +224,7 @@ public class main {
     private static void writeAnswersToFile(String fileName, List<String> answers) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (int i = 0; i < answers.size(); i++) {
-                writer.write((i + 1) + ". " + answers.get(i));
+                writer.write(answers.get(i));
                 writer.newLine();
             }
         }
