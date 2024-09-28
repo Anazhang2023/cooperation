@@ -77,10 +77,8 @@ public class main2 {
         for (int i = 0; i < exercises.size(); i++) {
             String exercise = exercises.get(i);
             String expectedAnswer=main.evaluateExpression(exercise);
-            double expectedAnswerN=Number.valueOf(expectedAnswer);
             String userAnswer = userAnswers.get(i);
-            double userAnswerN=Number.valueOf(userAnswer);
-            if (Math.abs(expectedAnswerN - userAnswerN) < 1e-9) {
+            if (expectedAnswer.equals(userAnswer)) {
                 correctCount++;
                 correctIndices.add(i + 1);
             } else {
@@ -105,10 +103,17 @@ public class main2 {
     private static List<String> readExercisesFromFile(String filename) throws IOException {
         List<String> exercises = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                exercises.add(line);
+            String line = reader.readLine();
+            while (line!=null){
+                if (line.length()!=0) {
+                    exercises.add(line);
+                    line=reader.readLine();
+                }else{
+                    line=reader.readLine();
+                    continue;
+                }
             }
+
         }
         return exercises;
     }
@@ -122,9 +127,15 @@ public class main2 {
     private static List<String> readAnswersFromFile(String filename) throws IOException {
         List<String> answers = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                answers.add(line);
+            String line = reader.readLine();
+            while (line!=null){
+                if (line.length()!=0) {
+                    answers.add(line);
+                    line=reader.readLine();
+                }else{
+                    line=reader.readLine();
+                    continue;
+                }
             }
         }
         return answers;

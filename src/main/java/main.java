@@ -91,7 +91,7 @@ public class main {
         Stack<String> stack = new Stack<String>();//暂存操作符
         for(int i=0;i<list.size();i++){
             String s = list.get(i);
-            if(s.equals("=")||s.equals("\r\n")){
+            if(s.equals("=")||s.equals("\n")){
                 continue;
             }
             else if(s.equals("(")){
@@ -123,7 +123,7 @@ public class main {
             while(!stack.empty()){
                 Postfixlist.add(stack.pop());
             }
-
+        System.out.println(Postfixlist);
         return Postfixlist;
     }
     /**
@@ -175,7 +175,7 @@ public class main {
         //生成具体表达式和格式
         String res=formExpression(range,opeNum);
         //生成格式
-        String result =  res +"\r\n";
+        String result =  res +"\n";
         return result;
     }
     /**

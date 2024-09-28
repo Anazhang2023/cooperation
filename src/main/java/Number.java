@@ -97,7 +97,26 @@ public class Number {
         }
         return number;
     }
-
+    /**
+     * 消除最大公约数
+     */
+    private Number dis(Number number){
+        int a=number.down;
+        int b=number.up;
+        int r= number.down%number.up;
+        while(r!=0){
+            a = b;
+            b = r;;
+            r = a % b;
+        }
+        if(b==1){
+            return number;
+        }else{
+            number.up/=b;
+            number.down/=b;
+        }
+        return number;
+    }
 
     /**
      * toString--输出格式转换
@@ -129,8 +148,10 @@ public class Number {
         }
 
         if(fro==0&&number.up<number.down){
+            number=dis(number);
             return number.up+"/"+number.down;
         }
+            number=dis(number);
             return number.fro+"‘"+number.up+"/"+number.down;
     }
     /**
