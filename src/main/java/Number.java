@@ -109,8 +109,20 @@ public class Number {
             fro+=1;
             up-=down;
         }
+        while(number.up<0&&(-number.up)>=number.down){
+            fro-=1;
+            up+=down;
+            if(number.fro<0&&(-number.up)<number.down){
+                return  number.fro+"‘"+(-number.up)+"/"+number.down;
+            }
+        }
         if(number.up==number.down){
             fro+=1;
+            up=0;
+            down=0;
+            return String.valueOf(number.fro);
+        }
+        if(number.up==0){
             up=0;
             down=0;
             return String.valueOf(number.fro);

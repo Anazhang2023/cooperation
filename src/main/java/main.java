@@ -161,6 +161,7 @@ public class main {
 
             }
         }
+
         return stack.pop();
     }
     /**
@@ -234,11 +235,15 @@ public class main {
     public static Number built(int r, Random random){
         Number number = new Number();
         //0-9
-        number.fro=random.nextInt(r);
-        //1-10
-        number.down=random.nextInt(r)+1;
-        //1-10(<=down)
+        while(number.fro<=0){
+            number.fro=random.nextInt(r)-1;
+        }
+
+        while(number.down<=0){
+            number.down=random.nextInt(r);
+        }
         number.up=random.nextInt(number.down)+1;
+
         return number;
     }
 
