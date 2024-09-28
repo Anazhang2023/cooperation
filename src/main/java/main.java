@@ -1,9 +1,9 @@
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @Author : ZhangYiXin
@@ -17,6 +17,20 @@ public class main {
     private static final String[] OPERATORS = {"+", "-", "*", "÷"};
     private static List<String> generatedExercises = new ArrayList<String>();
     private static List<String> answers = new ArrayList<String>();
+
+    /**
+     * 判断是否为符号
+     * @param c
+     * @return
+     */
+    public static boolean isOp(String c){
+        for(int i=0;i<OPERATORS.length;i++){
+            if(OPERATORS[i].equals(c)){
+                return true;
+            }
+        }
+        return false;
+    }
     //界面
     public static void main(String[] args) {
         //参数设置
@@ -43,23 +57,111 @@ public class main {
             generatedExercises.add(exercise);
             System.out.println(exercise);
             //判断两个式子是否相同
-            /**
-             *   for (int i=0;i<generatedExercises.size()-1;i++) {
-             *                 String s1=generatedExercises.get(i);
-             *                 if (!ifContains(exercise,s1)) {
-             *                     //生成答案
-             *                     double answer = evaluateExpression(exercise);
-             *                     //写入答案
-             *                     answers.add(String.valueOf(answer));
-             *
-             *                 }else{
-             *                     generatedExercises.remove(exercise);
-             *                 }
-             *             }
-              */
-
+            //生成答案
+            String answer = evaluateExpression(exercise);
+            //写入答案
+            answers.add(answer);
         }
         return;
+    }
+    /**
+     * 生成答案
+     */
+    public static String evaluateExpression(String expression) {
+        // 输入式子格式转换
+        String[] tokens = expression.split(" ");
+        List<String> list = new ArrayList<String>();
+        for (int i=0;i<tokens.length;i++){
+            list.add(tokens[i]);
+        }
+        // 变化为后缀表达式
+        List<String> list1 = simpleTosuffix(list);
+        // 后缀表达式计算
+        Number number = count(list1);
+        return number.toString(number);
+    }
+
+    /**
+     * 一般计算式转换为后缀表达式
+     * @param list
+     * @return
+     */
+    public static List<String> simpleTosuffix(List<String> list){
+        List<String> Postfixlist = new ArrayList<String>();//存放后缀表达式
+        Stack<String> stack = new Stack<String>();//暂存操作符
+        for(int i=0;i<list.size();i++){
+            String s = list.get(i);
+            if(s.equals("=")||s.equals("\r\n")){
+                continue;
+            }
+            else if(s.equals("(")){
+                stack.push(s);
+            }else if(s.equals(OPERATORS[2])||s.equals(OPERATORS[3])){
+                stack.push(s);
+            }else if(s.equals(OPERATORS[0])||s.equals(OPERATORS[1])){
+                if(!stack.empty()){
+                    while(!(stack.peek().equals("("))){
+                        Postfixlist.add(stack.pop());
+                        if(stack.empty()){
+                            break;
+                        }
+                    }
+                    stack.push(s);
+                }else{
+                    stack.push(s);
+                }
+            }else if(s.equals(")")){
+                while(!(stack.peek().equals("("))){
+                    Postfixlist.add(stack.pop());
+                }
+                stack.pop();
+            }else{
+                Postfixlist.add(s);
+            }
+        }
+
+            while(!stack.empty()){
+                Postfixlist.add(stack.pop());
+            }
+
+        return Postfixlist;
+    }
+    /**
+     * 后缀表达式计算
+     */
+    public static Number count(List<String> list){
+        Stack<Number> stack = new Stack<>();
+        for(int i=0;i<list.size();i++){
+            String s = list.get(i);
+            if(!isOp(s)){
+                Number number=Number.ToNumber(s);
+                stack.push(number);
+            }else{
+                if(s.equals(OPERATORS[0])){
+                    Number a1 = stack.pop();
+                    Number a2 = stack.pop();
+                    Number v = a2.add(a1,a2);
+                    stack.push(v);
+                }else if(s.equals(OPERATORS[1])){
+                    Number a1 = stack.pop();
+                    Number a2 = stack.pop();
+                    Number v = a2.sub(a2,a1);
+                    stack.push(v);
+                }else if(s.equals(OPERATORS[2])){
+                    Number a1 = stack.pop();
+                    Number a2 = stack.pop();
+                    Number v = a2.mut(a1,a2);
+                    stack.push(v);
+                }else if(s.equals(OPERATORS[3])){
+                    Number a1 = stack.pop();
+                    Number a2 = stack.pop();
+                    Number v = a2.div(a2,a1);
+                    stack.push(v);
+                }
+
+            }
+        }
+        return stack.pop();
     }
     /**
      * 生成随机题目
@@ -72,7 +174,7 @@ public class main {
         //生成具体表达式和格式
         String res=formExpression(range,opeNum);
         //生成格式
-        String result = i+1 + "." + res +"\r\n";
+        String result =  res +"\r\n";
         return result;
     }
     /**
@@ -175,12 +277,7 @@ public class main {
         }
         return i == s1.length() && j == s2.length();
     }
-    /**
-     * 生成答案
-     */
-    private static double evaluateExpression(String expression) {
-        return 0.1;
-    }
+
     /**
      * 解析-n,-r
      * @param args

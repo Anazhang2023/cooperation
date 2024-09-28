@@ -18,14 +18,52 @@ public class Number {
         this.down = down;
     }
 
+    /**
+     * 加法
+     * @param a
+     * @param b
+     * @return
+     */
     Number add(Number a, Number b){
-        return new Number(1,1,1);
+        a=trans(a);
+        b=trans(b);
+        return new Number(0,a.up*b.down+a.down*b.up,a.down*b.down);
     }
 
+    /**
+     * 减法
+     * @param a
+     * @param b
+     * @return
+     */
      Number sub(Number a,Number b){
         a=trans(a);
         b=trans(b);
         return new Number(0,a.up*b.down-a.down*b.up,a.down*b.down);
+    }
+
+    /**
+     * 乘法
+     * @param a
+     * @param b
+     * @return
+     */
+    Number mut(Number a,Number b){
+        a=trans(a);
+        b=trans(b);
+        return new Number(0,a.up*b.up,a.down*b.down);
+    }
+
+    /**
+     * 除法
+     * @param a
+     * @param b
+     * @return
+     */
+    Number div(Number a,Number b){
+        a=trans(a);
+        b=trans(b);
+        return new Number(0,a.up*b.down,a.down*b.up);
     }
     /**
      *判断大小
@@ -39,13 +77,6 @@ public class Number {
         return true;
     }
 
-    Number mut(Number a,Number b){ // 乘法运算
-        return new Number(1,1,1);
-    }
-
-    Number div(Number a,Number b){  // 除法运算
-        return new Number(1,1,1);
-    }
 
     /**
      * 分数转换为真分数
@@ -90,4 +121,40 @@ public class Number {
         }
             return number.fro+"‘"+number.up+"/"+number.down;
     }
+    /**
+     * ToNumber--输入格式转换
+     */
+    public static Number ToNumber(String string) {
+        Number number = new Number();
+        if (!string.contains("‘")&&!string.contains("/")) {
+            number.fro=string.charAt(0)-48;
+            number.down=0;
+            number.up=0;
+        }
+        else if(!string.contains("‘")&&string.contains("/")){
+            number.fro=0;
+            number.up=string.charAt(0)-48;
+            number.down=string.charAt(2)-48;
+        }
+        else if(string.contains("‘")&&string.contains("/")){
+            number.fro=string.charAt(0)-48;
+            number.up=string.charAt(2)-48;
+            number.down=string.charAt(4)-48;
+        }
+        return number;
+    }
+    /**
+     * 计算真值
+     */
+    public static double valueOf(String s){
+        Number number = ToNumber(s);
+        Number trans = number.trans(number);
+        if(trans.down!=0){
+            return trans.up/trans.down;
+        }
+        else{
+            return 0;
+        }
+    }
 }
+
